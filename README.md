@@ -6,6 +6,10 @@
 - https://github.com/mattn/mruby-json.git
 - https://github.com/luisbebop/mruby-polarssl.git
 
+### referenced
+
+- https://github.com/matsumoto-r/mruby-zabbix 
+
 ### install by mrbgems
 
 - git clone mruby-datadog
