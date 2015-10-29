@@ -9,26 +9,30 @@ class Datadog
       }
     end
 
-    def events(post_data)
+    def events(title, text, args={})
+      post_data = {
+        :title => title,
+        :text => text,
+        :priority => args[:priority],
+        :tags => [args[:tags]],
+        :alert_type => args[:alert_type],
+      }
+
       post("events", post_data)
     end
 
-    def series(metrics_data)
-      # metrics_data = {
-      #   :metrics => "mruby.test",
-      #   :points => "12345",
-      #   :host => "foo.bar.com",
-      # }
+    def series(metric, points, args={})
       current_time = Time.now.to_i
       post_data = {
         :series => [{
-          :metric => metrics_data[:metrics],
-          :type => metrics_data[:type],
-          :points => [[current_time, metrics_data[:points].to_i]],
-          :host => metrics_data[:host],
-          :tags => metrics_data[:tags],
+          :metric => metric,
+          :points => [[current_time, points.to_f]],
+          :type => args[:type],
+          :host => args[:host],
+          :tags => args[:tags],
         }]
       }
+
       post("series", post_data)
     end
     
@@ -37,5 +41,6 @@ class Datadog
       url = @url + api_path + @api_key 
       http.post(url, JSON::stringify(data), @request)
     end
+
   end
 end
