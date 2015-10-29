@@ -50,10 +50,10 @@ config = {
 
 dog = Datadog::Client.new(config)
 
-puts "request:  #{JSON::stringify(event_data)}"
+# Events
 puts "response: #{dog.events("mruby.test", "test", :alert_type => "error")['body']}"
 
-puts "request:  #{JSON::stringify(metrics_data)}"
+# Metrics
 puts "response: #{dog.series("mruby.test", 12345, :host => "foo.bar.com")['body']}"
 ```
 
