@@ -78,4 +78,4 @@ request:  {"title":"mruby","text":"test","alert_type":"warning"}
 response: {"status":"ok","event":{"id":251030430326433344,"title":"mruby","text":"test","date_happened":1446077768,"handle":null,"priority":null,"related_event_id":null,"tags":null,"url":"https://propjoe.agent.datadoghq.com/event/event?id=251030430326433344"}}
 request:  {"metrics":"mruby.test","points":"12345","host":"foo.bar.com"}
 response: {"status": "ok"}
-``
+```
