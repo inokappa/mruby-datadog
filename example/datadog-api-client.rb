@@ -1,23 +1,11 @@
 config = {
-  :api_key   => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  :api_key   => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
 }
 
 dog = Datadog::Client.new(config)
 
-event_data = {
-  :title => "mruby",
-  :text => "test",
-  :alert_type => "warning",
-}
-
 puts "request:  #{JSON::stringify(event_data)}"
-puts "response: #{dog.events(event_data)['body']}"
-
-metrics_data = {
-  :metrics => "mruby.test",
-  :points => "12345",
-  :host => "foo.bar.com",
-}
+puts "response: #{dog.events("mruby.test", "test", :alert_type => "error")['body']}"
 
 puts "request:  #{JSON::stringify(metrics_data)}"
-puts "response: #{dog.series(metrics_data)['body']}"
+puts "response: #{dog.series("mruby.test", 12345, :host => "foo.bar.com")['body']}"
