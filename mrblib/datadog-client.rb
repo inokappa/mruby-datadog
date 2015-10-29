@@ -23,8 +23,10 @@ class Datadog
       post_data = {
         :series => [{
           :metric => metrics_data[:metrics],
+          :type => metrics_data[:type],
           :points => [[current_time, metrics_data[:points].to_i]],
-          :host => metrics_data[:host]
+          :host => metrics_data[:host],
+          :tags => metrics_data[:tags],
         }]
       }
       post("series", post_data)
