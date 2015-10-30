@@ -2,7 +2,8 @@ class Datadog
   class Client
     def initialize(config)
       @url       = 'https://app.datadoghq.com/api/v1/'
-      @api_key   = '?api_key=' + config[:api_key]
+      @api_key   = config[:api_key]
+      @app_key   = config[:app_key]
       @request   = {
         'Content-Type'   => "Content-type: application/json",
         'User-Agent'     => "mruby-datadog-client",
@@ -35,10 +36,21 @@ class Datadog
 
       post("series", post_data)
     end
+
+    def search(get_data)
+      get("search", get_data)
+    end
+
+    def get(api_path, data)
+      http = HttpRequest.new()
+      url = @url + api_path + '?api_key=' + @api_key + '&application_key=' + @app_key
+      query = '&q=' + data
+      http.get(url + query)
+    end
     
     def post(api_path, data)
       http = HttpRequest.new()
-      url = @url + api_path + @api_key 
+      url = @url + api_path + '?api_key=' + @api_key
       http.post(url, JSON::stringify(data), @request)
     end
 
