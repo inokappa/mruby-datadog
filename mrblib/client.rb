@@ -14,15 +14,14 @@ class Datadog
 
     def get(uri_path, args = {})
       url = @url + uri_path + @credential_path
-      return http.get(url) if args[:query] == nil
-      query = '&q=' + args[:query]
-      http.get(url + query)
+      return http.get(url, @request) if args[:query] == nil
+      http.get(url + '&' + args[:query], @request)
     end
 
     def post(uri_path, args = {})
       url = @url + uri_path + @credential_path
       if args[:data]
-        http.post(url, JSON::stringify(data), @request)
+        http.post(url, JSON::stringify(args[:data]), @request)
       else
         http.post(url, @request)
       end
