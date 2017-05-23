@@ -27,7 +27,7 @@ class Datadog
       end
     end
 
-    def delete(api_path, monitor_id = nil)
+    def delete(uri_path)
       url = @url + uri_path + @credential_path
       http.delete(url, @request)
     end
