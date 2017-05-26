@@ -19,6 +19,7 @@ class Datadog
     end
 
     def post(uri_path, args = {})
+      p JSON::stringify(args[:data])
       url = @url + uri_path + @credential_path
       if args[:data]
         http.post(url, JSON::stringify(args[:data]), @request)
