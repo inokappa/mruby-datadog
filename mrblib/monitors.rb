@@ -42,14 +42,10 @@ class Datadog
     end
 
     def update_monitor(monitor_id, type, query, args = {})
-      p type
-      p query
-      p args
       data = monitor_data(type, query, args)
       uri_path = %Q{monitor/#{monitor_id}}
-      p data
       begin
-        res = post(uri_path, data: data)
+        res = put(uri_path, data: data)
         response(res.body)
       rescue => e
         puts e
