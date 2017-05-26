@@ -108,7 +108,7 @@ class Datadog
       response_data = []
       response_data.push(res.code)
       response_data.push(JSON.parse(res.body))
-      JSON::stringify(response_data)
+      response_data
     end
 
     def monitor_data(type, query, args = {})
