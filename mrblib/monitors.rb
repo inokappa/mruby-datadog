@@ -46,7 +46,7 @@ class Datadog
       uri_path = %Q{monitor/#{monitor_id}}
       begin
         res = put(uri_path, data: data)
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
