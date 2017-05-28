@@ -1,16 +1,19 @@
-## Datadog API client for mruby
+# Datadog API client for mruby
 
-### required
+## Supported API
+
+- [Events](http://docs.datadoghq.com/ja/api/?lang=console#events)
+- [Metrics](http://docs.datadoghq.com/ja/api/?lang=console#metrics)
+- [Monitors](http://docs.datadoghq.com/ja/api/?lang=console#monitors)
+- [Search](http://docs.datadoghq.com/ja/api/?lang=console#search)
+
+## Required
 
 - https://github.com/matsumoto-r/mruby-httprequest.git
 - https://github.com/mattn/mruby-json.git
 - https://github.com/luisbebop/mruby-polarssl.git
 
-### referenced
-
-- https://github.com/matsumoto-r/mruby-zabbix 
-
-### install by mrbgems
+## install by mrbgems
 
 - git clone mruby-datadog
 
@@ -39,37 +42,70 @@ cd ${mruby_root}/
 make
 ```
 
-### example
-
-- datadog-api-client.rb
+## example
 
 ```ruby
 config = {
-  :api_key   => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  :api_key => "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  :app_key => "yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
 }
 
-dog = Datadog::Client.new(config)
+#
+# Monitors
+#
+dog = Datadog::Monitors.new(config)
+res = dog.get_all_monitors
+p res.length
+res = dog.get_all_monitors(tags: "host:vagrant-ubuntu-trusty-64")
+p res.length
+res.each do |monitor|
+  p monitor
+end
+puts dog.get_monitor(1234567)
 
-# Events
-puts "response: #{dog.events("mruby.test", "test", :alert_type => "error")['body']}"
+options = {
+  'notify_no_data' => true,
+  'no_data_timeframe' => 20
+}
+tags = ['app:webserver', 'frontend']
+puts dog.monitor("metric alert", \
+            "avg(last_1h):sum:system.net.bytes_rcvd{host:host0} > 100", \
+            :name => "Bytes received on host1", \
+            :message => "We may need to add web hosts if this is consistently high.", \
+            :tags => tags, \
+            :options => options)
 
+puts dog.monitor("metric alert", \
+          "avg(last_1h):sum:system.net.bytes_rcvd{host:host1} > 100")
+
+puts dog.update_monitor(1234567, "metric alert", \
+            "avg(last_1h):sum:system.net.bytes_rcvd{host:host1} > 100")
+
+puts dog.delete_monitor(1234567)
+puts dog.get_monitor(1234567)
+
+puts dog.mute_monitor(1234567)
+puts dog.unmute_monitor(1234567)
+
+puts dog.mute_monitors
+puts dog.unmute_monitors
+
+#
 # Metrics
-puts "response: #{dog.series("mruby.test", 12345, :host => "foo.bar.com")['body']}"
+#
+dog = Datadog::Metrics.new(config)
+puts "response: #{dog.emit_points("mruby.test", 50, :host => "foo.bar.com")}"
+points = [[Time.now.to_i, 1], [Time.now.to_i + 10, 10], [Time.now.to_i + 20, 20]]
+puts "response: #{dog.emit_points("mruby.test2", points, :host => "foo.bar.com")}"
 
-# Searh
-puts "response: #{dog.search("foo")['body']}"
-```
+from = Time.now.to_i - 3600
+to = Time.now.to_i
+query = 'system.cpu.idle{*}by{host}'
+puts dog.get_points(query, from, to)
 
-- execute
-
-```sh
-mruby datadog-api-client.rb
-```
-
-- output
-
-```javascript
-response: {"status":"ok","event":{"id":251030430326433344,"title":"mruby","text":"test","date_happened":1446077768,"handle":null,"priority":null,"related_event_id":null,"tags":null,"url":"https://propjoe.agent.datadoghq.com/event/event?id=251030430326433344"}}
-response: {"status": "ok"}
-response: {"results": {"metrics": [], "hosts": ["foo.bar.com"]}}
+#
+# Search
+#
+dog = Datadog::Search.new(config)
+dog.search("host:vagrant-ubuntu-trusty-64")
 ```
