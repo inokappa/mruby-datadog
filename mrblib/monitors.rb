@@ -4,7 +4,7 @@ class Datadog
       data = monitor_data(type, query, args)
       begin
         res = post('monitor', data: data)
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
@@ -14,7 +14,7 @@ class Datadog
       uri_path = %Q{monitor/#{monitor_id}}
       begin
         res = get(uri_path)
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
@@ -35,7 +35,7 @@ class Datadog
 
       begin
         res = get('monitor', query: query.join('&'))
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
@@ -45,8 +45,8 @@ class Datadog
       data = monitor_data(type, query, args)
       uri_path = %Q{monitor/#{monitor_id}}
       begin
-        res = post(uri_path, data: data)
-        response(res.body)
+        res = put(uri_path, data: data)
+        response(res)
       rescue => e
         puts e
       end
@@ -56,7 +56,7 @@ class Datadog
       uri_path = %Q{monitor/#{monitor_id}}
       begin
         res = delete(uri_path)
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
@@ -66,7 +66,7 @@ class Datadog
       uri_path = %Q{monitor/#{monitor_id}/mute}
       begin
         res = post(uri_path)
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
@@ -76,7 +76,7 @@ class Datadog
       uri_path = %Q{monitor/#{monitor_id}/unmute}
       begin
         res = post(uri_path)
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
@@ -86,7 +86,7 @@ class Datadog
       uri_path = %Q{monitor/mute_all}
       begin
         res = post(uri_path)
-        response(res.body)
+        response(res)
       rescue => e
         puts e
       end
@@ -104,8 +104,11 @@ class Datadog
 
     private
 
-    def response(body)
-      JSON.parse(body)
+    def response(res)
+      response_data = []
+      response_data.push(res.code)
+      response_data.push(JSON.parse(res.body))
+      response_data
     end
 
     def monitor_data(type, query, args = {})

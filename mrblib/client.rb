@@ -27,6 +27,15 @@ class Datadog
       end
     end
 
+    def put(uri_path, args = {})
+      url = @url + uri_path + @credential_path
+      if args[:data]
+        http.put(url, JSON::stringify(args[:data]), @request)
+      else
+        http.put(url, @request)
+      end
+    end
+
     def delete(uri_path)
       url = @url + uri_path + @credential_path
       http.delete(url, @request)
