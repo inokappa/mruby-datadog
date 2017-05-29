@@ -61,3 +61,28 @@ puts dog.get_points(query, from, to)
 #
 dog = Datadog::Search.new(config)
 dog.search("host:vagrant-ubuntu-trusty-64")
+
+#
+# Downtimes
+#
+dog = Datadog::Downtimes.new(config)
+start_ts = Time.now.to_i
+end_ts = start_ts + (3 * 60 * 60)
+end_reccurrence_ts = start_ts + (24 * 60 * 60) # 4 weeks from now
+
+recurrence = {
+  :type => 'weeks',
+  :period => 1,
+  :week_days => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'],
+  :until_date => end_reccurrence_ts
+}
+# Schedule downtime
+res = dog.schedule_downtime('env:test', :start => start_ts, :end => end_ts, :recurrence => recurrence)
+res = dog.update_downtime(res.last['id'], :end => end_ts, :message => 'testtesttesttest', :recurrence => recurrence)
+p res
+
+dog.get_all_downtimes(:current_only => true).last.each do |d|
+  p d['id']
+  res = dog.cancel_downtime(res.last['id'])
+  p res
+end
